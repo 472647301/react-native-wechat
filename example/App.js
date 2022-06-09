@@ -296,28 +296,6 @@ export default class App extends Component {
         <TouchableOpacity style={styles.button} onPress={this.sendAuthRequest}>
           <Text style={styles.text}>微信授权登录</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={this.sendFileContent}>
-          <Text style={styles.text}>发送文件消息给微信</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={this.addCardToWXCardPackage}>
-          <Text style={styles.text}>添加卡券至卡包</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={this.chooseCard}>
-          <Text style={styles.text}>选择卡券</Text>
-        </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.button} onPress={this.chooseInvoiceTicket}>
-          <Text style={styles.text}>选择发票</Text>
-        </TouchableOpacity> */}
-        <TouchableOpacity style={styles.button} onPress={this.sendAppBrand}>
-          <Text style={styles.text}>小程序分享</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={this.launchMiniProgram}>
-          <Text style={styles.text}>拉起小程序</Text>
-        </TouchableOpacity>
       </View>
     );
   }
