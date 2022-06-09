@@ -76,46 +76,6 @@ declare module "@byron-react-native/wechat" {
     thumbPath: string;
     scene: WXScene;
   }
-  export interface WXFileDataParams {
-    filePath: string;
-    extension: string;
-    title: string;
-    description: string;
-    thumbPath: string;
-    scene: WXScene;
-  }
-  export interface WXCardParams {
-    appid: string;
-    cardSign: string;
-    nonceStr: string;
-    signType: string;
-    timestamp: number;
-  }
-  export interface WXMiniProgramWebpageUrlParams {
-    webpageUrl: string;
-    userName: string;
-    path: string;
-    title: string;
-    description: string;
-    thumbImagePath: string;
-    hdImagePath: string;
-    withShareTicket: boolean;
-    scene: WXScene;
-  }
-  export interface WXMediaMessage {
-    type: number;
-    openID: string;
-    title: string;
-    description: string;
-    mediaTagName: string;
-    messageExt: string;
-    messageAction: string;
-    /**
-     * 多媒体数据对象，可以为WXImageObject，WXMusicObject，WXVideoObject，WXWebpageObject等。
-     * 暂时不解析
-     */
-    mediaObject: {};
-  }
   export interface WXSubscribeMsgResp extends WXBaseResp {
     templateId: string;
     scene: WXScene;
@@ -218,6 +178,13 @@ declare module "@byron-react-native/wechat" {
       corpId: string,
       url: string
     ): Promise<WXBaseResp & { extMsg: string }>;
+    static addListener(
+      cb: (data: {
+        extInfo: string;
+        title: string;
+        description: string;
+      }) => void
+    ): { remove: () => void };
   }
   export default WXSdk;
 }
