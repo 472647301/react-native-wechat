@@ -145,98 +145,6 @@ export default class WxSdk {
       return data;
     });
   }
-  static async sendFileData(params) {
-    const event = "SendMessageToWXResp";
-    const { filePath, extension, title, description, thumbPath, scene } =
-      params;
-    Wechat.sendFileData(
-      filePath,
-      extension,
-      title,
-      description,
-      thumbPath,
-      scene
-    );
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
-  static async addCardsToCardPackage(appid, cardIds, cardExts) {
-    const event = "AddCardToWXCardPackageResp";
-    Wechat.addCardsToCardPackage(appid, cardIds, cardExts);
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
-  static async chooseCard(params) {
-    const event = "WXChooseCardResp";
-    const { appid, cardSign, nonceStr, signType, timestamp } = params;
-    Wechat.chooseCard(appid, cardSign, nonceStr, signType, timestamp);
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
-  static async chooseInvoice(params) {
-    const event = "WXChooseInvoiceResp";
-    const { appid, cardSign, nonceStr, signType, timestamp } = params;
-    Wechat.chooseInvoice(appid, cardSign, nonceStr, signType, timestamp);
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
-  static async sendMiniProgramWebpageUrl(params) {
-    const event = "WXMediaMessage";
-    const {
-      webpageUrl,
-      userName,
-      path,
-      title,
-      description,
-      thumbImagePath,
-      hdImagePath,
-      withShareTicket,
-      scene,
-    } = params;
-    Wechat.sendMiniProgramWebpageUrl(
-      webpageUrl,
-      userName,
-      path,
-      title,
-      description,
-      thumbImagePath,
-      hdImagePath,
-      withShareTicket,
-      scene
-    );
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
   static subscription(scene, templateId, reserved, cb) {
     Wechat.subscription(scene, templateId, reserved);
     this.subs["WXSubscribeMsgResp"] = emitter.addListener(
@@ -244,18 +152,6 @@ export default class WxSdk {
       cb
     );
     return this.subs["WXSubscribeMsgResp"];
-  }
-  static async launchMiniProgramWithUserName(userName, path) {
-    const event = "WXLaunchMiniProgramResp";
-    Wechat.launchMiniProgramWithUserName(userName, path);
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
   }
   static async openCustomerService(corpId, url) {
     const event = "WXOpenCustomerServiceResp";
