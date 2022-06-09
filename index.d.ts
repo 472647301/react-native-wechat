@@ -203,36 +203,6 @@ declare module "@byron-react-native/wechat" {
       scene: WXScene
     ): Promise<WXBaseResp>;
     /**
-     * 发送文件消息给微信
-     */
-    static sendFileData(params: WXFileDataParams): Promise<WXBaseResp>;
-    /**
-     * 添加卡券至卡包
-     */
-    static addCardsToCardPackage(
-      appid: string,
-      cardIds: Array<string>,
-      cardExts: Array<string>
-    ): Promise<WXBaseResp & { cardAry: Array<string> }>;
-    /**
-     * 选择卡券
-     */
-    static chooseCard(
-      params: WXCardParams
-    ): Promise<WXBaseResp & { cardAry: Array<string> }>;
-    /**
-     * 选择发票
-     */
-    static chooseInvoice(
-      params: WXCardParams
-    ): Promise<WXBaseResp & { cardAry: Array<string> }>;
-    /**
-     * 小程序分享
-     */
-    static sendMiniProgramWebpageUrl(
-      params: WXMiniProgramWebpageUrlParams
-    ): Promise<WXMediaMessage>;
-    /**
      * 订阅消息
      */
     static subscription(
@@ -241,13 +211,6 @@ declare module "@byron-react-native/wechat" {
       reserved: string,
       cb: (data: WXSubscribeMsgResp) => void
     ): { remove: () => void };
-    /**
-     * 拉起小程序
-     */
-    static launchMiniProgramWithUserName(
-      userName: string,
-      path: string
-    ): Promise<WXBaseResp & { extMsg: string }>;
     /**
      * 跳转到微信客服会话
      */
