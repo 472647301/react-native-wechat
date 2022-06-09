@@ -256,67 +256,6 @@ RCT_EXPORT_METHOD(sendEmotionData:(NSString *)filePath
                                  InScene:scene];
 }
 
-// 发送文件消息给微信
-RCT_EXPORT_METHOD(sendFileData:(NSString *)filePath
-                  fileExtension:(NSString *)extension
-                          Title:(NSString *)title
-                    Description:(NSString *)description
-                     ThumbImage:(NSString *)thumbPath
-                        InScene:(int)scene) {
-    NSData *fileData = [NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
-    NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
-    
-    NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
-    [WXApiRequestHandler sendFileData:fileData
-                        fileExtension:extension
-                                Title:title
-                          Description:description
-                           ThumbImage:[UIImage imageWithData:thumbImage]
-                              InScene:scene];
-}
-
-// 添加卡券至卡包
-RCT_EXPORT_METHOD(addCardsToCardPackage:(NSString *)appid
-                  cardIds:(NSArray *)cardIds
-                  cardExts:(NSArray *)cardExts) {
-    [WXApiRequestHandler addCardsToCardPackage:appid cardIds:cardIds cardExts:cardExts];
-}
-
-// 选择卡券
-RCT_EXPORT_METHOD(chooseCard:(NSString *)appid
-                  cardSign:(NSString *)cardSign
-                  nonceStr:(NSString *)nonceStr
-                  signType:(NSString *)signType
-                 timestamp:(UInt32)timestamp) {
-    [WXApiRequestHandler chooseCard:appid cardSign:cardSign nonceStr:nonceStr signType:signType timestamp:timestamp];
-}
-
-// 选择发票
-RCT_EXPORT_METHOD(chooseInvoice:(NSString *)appid
-                  cardSign:(NSString *)cardSign
-                  nonceStr:(NSString *)nonceStr
-                  signType:(NSString *)signType
-                 timestamp:(int)timestamp) {
-    [WXApiRequestHandler chooseInvoice:appid cardSign:cardSign nonceStr:nonceStr signType:signType timestamp:timestamp];
-}
-
-// 小程序分享
-RCT_EXPORT_METHOD(sendMiniProgramWebpageUrl:(NSString *)webpageUrl
-                  userName:(NSString *)userName
-                      path:(NSString *)path
-                     title:(NSString *)title
-               Description:(NSString *)description
-                ThumbImage:(NSString *)thumbImagePath
-               hdImageData:(NSString *)hdImagePath
-           withShareTicket:(BOOL)withShareTicket
-                   InScene:(int)scene) {
-    NSData *hdImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:hdImagePath]];
-    NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImagePath]];
-    
-    NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
-    [WXApiRequestHandler sendMiniProgramWebpageUrl:webpageUrl userName:userName path:path title:title Description:description ThumbImage:[UIImage imageWithData:thumbImage] hdImageData:hdImageData withShareTicket:withShareTicket InScene:scene];
-}
-
 // 订阅消息
 RCT_EXPORT_METHOD(subscription:(NSString *)text
                   templateId:(NSString *)templateId
@@ -328,12 +267,6 @@ RCT_EXPORT_METHOD(subscription:(NSString *)text
     req.reserved = reserved;
     
     [WXApi sendReq:req completion:nil];
-}
-
-// 拉起小程序
-RCT_EXPORT_METHOD(launchMiniProgramWithUserName:(NSString *)userName
-                  path:(NSString *)path) {
-    [WXApiRequestHandler launchMiniProgramWithUserName:userName path:path];
 }
 
 // 跳转到微信客服会话
