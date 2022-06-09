@@ -282,41 +282,12 @@ RCT_EXPORT_METHOD(openCustomerService:(NSString *)corpId
 
 - (void)managerDidRecvShowMessageReq:(ShowMessageFromWXReq *)req {
     WXMediaMessage *msg = req.message;
-    [self sendEventWithName:@"WXMediaMessage" body:@{
-        @"type": @(req.type),
-        @"openID": req.openID,
+    WXAppExtendObject *obj = msg.mediaObject;
+    [self sendEventWithName:@"ShowMessageFromWXReq" body:@{
+        @"extInfo": obj.extInfo,
         @"title": msg.title,
         @"description": msg.description,
         @"mediaTagName": msg.mediaTagName,
-        @"messageExt": msg.messageExt,
-        @"messageAction": msg.messageAction,
-        /**
-         * 多媒体数据对象，可以为WXImageObject，WXMusicObject，WXVideoObject，WXWebpageObject等。
-         * 暂时不解析
-         */
-        @"mediaObject": @{
-            
-        }
-    }];
-}
-
-- (void)managerDidRecvLaunchFromWXReq:(LaunchFromWXReq *)req {
-    WXMediaMessage *msg = req.message;
-    [self sendEventWithName:@"WXMediaMessage" body:@{
-        @"type": @(req.type),
-        @"openID": req.openID,
-        @"title": msg.title,
-        @"description": msg.description,
-        @"mediaTagName": msg.mediaTagName,
-        @"messageExt": msg.messageExt,
-        @"messageAction": msg.messageAction,
-        /**
-         * 多媒体数据对象，可以为WXImageObject，WXMusicObject，WXVideoObject，WXWebpageObject等。
-         * 暂时不解析
-         */
-        @"mediaObject": @{
-            
-        }
     }];
 }
 
@@ -325,33 +296,6 @@ RCT_EXPORT_METHOD(openCustomerService:(NSString *)corpId
         @"errCode": @(response.errCode),
         @"type": @(response.type),
         @"errStr": response.errStr ? response.errStr : @"",
-    }];
-}
-
-- (void)managerDidRecvAddCardResponse:(AddCardToWXCardPackageResp *)response {
-    [self sendEventWithName:@"AddCardToWXCardPackageResp" body:@{
-        @"errCode": @(response.errCode),
-        @"type": @(response.type),
-        @"errStr": response.errStr ? response.errStr : @"",
-        @"cardAry": response.cardAry
-    }];
-}
-
-- (void)managerDidRecvChooseCardResponse:(WXChooseCardResp *)response {
-    [self sendEventWithName:@"WXChooseCardResp" body:@{
-        @"errCode": @(response.errCode),
-        @"type": @(response.type),
-        @"errStr": response.errStr ? response.errStr : @"",
-        @"cardAry": response.cardAry
-    }];
-}
-
-- (void)managerDidRecvChooseInvoiceResponse:(WXChooseInvoiceResp *)response {
-    [self sendEventWithName:@"WXChooseInvoiceResp" body:@{
-        @"errCode": @(response.errCode),
-        @"type": @(response.type),
-        @"errStr": response.errStr ? response.errStr : @"",
-        @"cardAry": response.cardAry
     }];
 }
 
@@ -381,16 +325,6 @@ RCT_EXPORT_METHOD(openCustomerService:(NSString *)corpId
     }];
 }
 
-- (void)managerDidRecvLaunchMiniProgram:(WXLaunchMiniProgramResp *)response
-{
-    [self sendEventWithName:@"WXLaunchMiniProgramResp" body: @{
-        @"errCode": @(response.errCode),
-        @"type": @(response.type),
-        @"errStr": response.errStr ? response.errStr : @"",
-        @"extMsg": response.extMsg
-    }];
-}
-
 - (void)managerDidRecvOpenCustomerService:(WXOpenCustomerServiceResp *)response
 {
     [self sendEventWithName:@"WXOpenCustomerServiceResp" body: @{
@@ -403,14 +337,10 @@ RCT_EXPORT_METHOD(openCustomerService:(NSString *)corpId
 
 - (NSArray<NSString *> *)supportedEvents {
   return @[
-      @"SendAuthResp",
+      @"ShowMessageFromWXReq",
       @"SendMessageToWXResp",
-      @"AddCardToWXCardPackageResp",
-      @"WXChooseCardResp",
-      @"WXChooseInvoiceResp",
-      @"WXMediaMessage",
+      @"SendAuthResp",
       @"WXSubscribeMsgResp",
-      @"WXLaunchMiniProgramResp",
       @"WXOpenCustomerServiceResp"
   ];
 }
