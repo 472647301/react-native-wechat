@@ -1,4 +1,4 @@
-package com.example;
+package net.sourceforge.simcpux;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
