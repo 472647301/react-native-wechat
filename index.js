@@ -165,6 +165,13 @@ export default class WxSdk {
       return data;
     });
   }
+  static addListener(cb) {
+    this.subs["ShowMessageFromWXReq"] = emitter.addListener(
+      "ShowMessageFromWXReq",
+      cb
+    );
+    return this.subs["ShowMessageFromWXReq"]
+  }
 }
 
 export const WXScene = {
