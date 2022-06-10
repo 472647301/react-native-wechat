@@ -11,14 +11,14 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   react-native-wechat
                    DESC
-  s.homepage     = "https://github.com/byron-react-native/react-native-wechat"
+  s.homepage     = "https://github.com/472647301/react-native-wechat"
   # brief license entry:
   s.license      = "MIT"
   # optional - use expanded license entry instead:
   # s.license    = { :type => "MIT", :file => "LICENSE" }
   s.authors      = { "Byron" => "byron.zhuwenbo@gmail.com" }
   s.platforms    = { :ios => "9.0" }
-  s.source       = { :git => "https://github.com/byron-react-native/react-native-wechat.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/472647301/react-native-wechat.git", :tag => "#{s.version}" }
 
   s.vendored_libraries = "ios/OpenSDK1.9.2_NoPay/libWeChatSDK.a"
   s.source_files = "ios/**/*.{h,c,cc,cpp,m,mm,swift}"
