@@ -2,6 +2,7 @@
 
 package com.byronwechat;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
@@ -17,15 +18,21 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelbiz.SubscribeMessage;
 import com.tencent.mm.opensdk.modelbiz.WXOpenCustomerServiceChat;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.ShowMessageFromWX;
 import com.tencent.mm.opensdk.modelmsg.WXAppExtendObject;
 import com.tencent.mm.opensdk.modelmsg.WXEmojiObject;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
@@ -35,19 +42,20 @@ import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
-public class WechatModule extends ReactContextBaseJavaModule {
+public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEventHandler {
 
     private IWXAPI api;
     private final ReactApplicationContext reactContext;
     // 缩略图大小 kb
     private final static int THUMB_SIZE = 32;
 
-    public static DeviceEventManagerModule.RCTDeviceEventEmitter eventEmitter;
-    public static String appId = "";
+    public DeviceEventManagerModule.RCTDeviceEventEmitter eventEmitter;
 
     public WechatModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -58,6 +66,39 @@ public class WechatModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return "Wechat";
+    }
+
+    /**
+     * fix Native module WeChatModule tried to override WeChatModule for module name RCTWeChat.
+     * If this was your intention, return true from WeChatModule#canOverrideExistingModule() bug
+     *
+     * @return
+     */
+    public boolean canOverrideExistingModule() {
+        return true;
+    }
+
+    private static final ArrayList<WechatModule> modules = new ArrayList<>();
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        modules.add(this);
+    }
+
+    @Override
+    public void onCatalystInstanceDestroy() {
+        super.onCatalystInstanceDestroy();
+        if (api != null) {
+            api = null;
+        }
+        modules.remove(this);
+    }
+
+    public static void handleIntent(Intent intent) {
+        for (WechatModule mod : modules) {
+            mod.api.handleIntent(intent, mod);
+        }
     }
 
     private String buildTransaction(final String type) {
@@ -134,7 +175,6 @@ public class WechatModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void registerApp(String appid, String universalLink, Promise promise) {
-        appId = appid;
         api = WXAPIFactory.createWXAPI(reactContext, appid, false);
         eventEmitter = reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
         promise.resolve(api.registerApp(appid));
@@ -351,8 +391,69 @@ public class WechatModule extends ReactContextBaseJavaModule {
         api.sendReq(req);
     }
 
+    @Override
+    public void onReq(BaseReq req) {
+        if (req.getType() == ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX) {
+            goToShowMsg((ShowMessageFromWX.Req) req);
+        }
+
+    }
+
+    @Override
+    public void onResp(BaseResp resp) {
+        if (resp.getType() == ConstantsAPI.COMMAND_SUBSCRIBE_MESSAGE) {
+            SubscribeMessage.Resp subscribeMsgResp = (SubscribeMessage.Resp) resp;
+            WritableMap data = Arguments.createMap();
+            data.putInt("errCode", subscribeMsgResp.errCode);
+            data.putInt("type", subscribeMsgResp.getType());
+            data.putString("errStr", subscribeMsgResp.errStr);
+            data.putString("templateId", subscribeMsgResp.templateID);
+            data.putInt("scene", subscribeMsgResp.scene);
+            data.putString("action", subscribeMsgResp.action);
+            data.putString("reserved", subscribeMsgResp.reserved);
+            data.putString("openId", subscribeMsgResp.openId);
+            eventEmitter.emit("WXSubscribeMsgResp", data);
+        } else if (resp.getType() == ConstantsAPI.COMMAND_SENDAUTH) {
+            SendAuth.Resp authResp = (SendAuth.Resp)resp;
+            WritableMap data = Arguments.createMap();
+            data.putString("code", authResp.code);
+            data.putString("state", authResp.state);
+            data.putInt("errCode", authResp.errCode);
+            data.putInt("type", authResp.getType());
+            data.putString("errStr", authResp.errStr);
+            data.putString("lang", authResp.lang);
+            data.putString("country", authResp.country);
+            eventEmitter.emit("SendAuthResp", data);
+        } else if (resp.getType() == ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX) {
+            SendMessageToWX.Resp item = (SendMessageToWX.Resp)resp;
+            WritableMap data = Arguments.createMap();
+            data.putInt("errCode", item.errCode);
+            data.putInt("type", item.getType());
+            data.putString("errStr", item.errStr);
+            eventEmitter.emit("SendMessageToWXResp", data);
+        } else if (resp.getType() == ConstantsAPI.COMMAND_OPEN_CUSTOMER_SERVICE_CHAT) {
+            WXOpenCustomerServiceChat.Resp  item = (WXOpenCustomerServiceChat.Resp)resp;
+            WritableMap data = Arguments.createMap();
+            data.putInt("errCode", item.errCode);
+            data.putInt("type", item.getType());
+            data.putString("errStr", item.errStr);
+            data.putString("extMsg", "");
+            eventEmitter.emit("WXOpenCustomerServiceResp", data);
+        }
+    }
+
+    private void goToShowMsg(ShowMessageFromWX.Req showReq) {
+        WXMediaMessage wxMsg = showReq.message;
+        WXAppExtendObject obj = (WXAppExtendObject) wxMsg.mediaObject;
+        WritableMap data = Arguments.createMap();
+        data.putString("extInfo", obj.extInfo);
+        data.putString("filePath", obj.filePath);
+        data.putString("title", wxMsg.title);
+        data.putString("description", wxMsg.description);
+        eventEmitter.emit("ShowMessageFromWXReq", data);
+    }
+
     private interface ImageCallback {
         void invoke(@Nullable Bitmap bitmap);
     }
-
 }
