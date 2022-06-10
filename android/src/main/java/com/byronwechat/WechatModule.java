@@ -326,55 +326,6 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void sendAppData(String info, String url, String title, String description, String messageExt, String action, String thumbPath, int scene) {
-        final WXAppExtendObject appdata = new WXAppExtendObject();
-        appdata.filePath = url;
-        appdata.extInfo = info;
-
-        final WXMediaMessage msg = new WXMediaMessage();
-
-        msg.title = title;
-        msg.description = description;
-        msg.mediaObject = appdata;
-        msg.messageExt = messageExt;
-        msg.messageAction = action;
-        getImage(Uri.parse(thumbPath), new ImageCallback() {
-            @Override
-            public void invoke(@Nullable Bitmap bitmap) {
-                if (bitmap != null) {
-                    msg.thumbData = bitmapResizeGetBytes(bitmap, THUMB_SIZE);
-                }
-                SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.transaction = buildTransaction("appdata");
-                req.message = msg;
-                req.scene = scene;
-                api.sendReq(req);
-            }
-        });
-    }
-
-    @ReactMethod
-    public void sendEmotionData(String filePath, String thumbPath, int scene) {
-        getImage(Uri.parse(filePath), new ImageCallback() {
-            @Override
-            public void invoke(@Nullable Bitmap bitmap) {
-                if (bitmap != null) {
-                    WXEmojiObject emoji = new WXEmojiObject();
-                    emoji.emojiData = bitmapTopBytes(bitmap);
-                    final WXMediaMessage msg = new WXMediaMessage();
-                    msg.thumbData = bitmapResizeGetBytes(bitmap, THUMB_SIZE);
-                    msg.mediaObject = emoji;
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = buildTransaction("emoji");
-                    req.message = msg;
-                    req.scene = scene;
-                    api.sendReq(req);
-                }
-            }
-        });
-    }
-
-    @ReactMethod
     public void subscription(String text, String templateId, String reserved) {
         SubscribeMessage.Req req = new SubscribeMessage.Req();
         req.scene = parseInt(text, 0);
@@ -396,7 +347,6 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (req.getType() == ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX) {
             goToShowMsg((ShowMessageFromWX.Req) req);
         }
-
     }
 
     @Override
