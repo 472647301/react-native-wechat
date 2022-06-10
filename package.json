@@ -18,8 +18,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/byron-react-native/react-native-wechat.git",
-    "baseUrl": "https://github.com/byron-react-native/react-native-wechat"
+    "url": "git+https://github.com/472647301/react-native-wechat.git",
+    "baseUrl": "https://github.com/472647301/react-native-wechat"
   },
   "keywords": [
     "react-native"
