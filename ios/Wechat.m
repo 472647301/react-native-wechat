@@ -3,8 +3,6 @@
 #import "Wechat.h"
 #import "WXApiRequestHandler.h"
 
-#define BUFFER_SIZE 1024 * 100
-
 @implementation Wechat
 
 RCT_EXPORT_MODULE()
@@ -214,46 +212,6 @@ RCT_EXPORT_METHOD(sendVideoURL:(NSString *)videoURL
                           Description:description
                            ThumbImage:[UIImage imageWithData:thumbImage]
                               InScene:scene];
-}
-
-// 发送App消息给微信
-RCT_EXPORT_METHOD(sendAppData:(NSString *)info
-                  ExtURL:(NSString *)url
-                   Title:(NSString *)title
-             Description:(NSString *)description
-              MessageExt:(NSString *)messageExt
-           MessageAction:(NSString *)action
-              ThumbImage:(NSString *)thumbPath
-                 InScene:(int)scene) {
-    NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
-    
-    NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
-    Byte* pBuffer = (Byte *)malloc(BUFFER_SIZE);
-    memset(pBuffer, 0, BUFFER_SIZE);
-    NSData* data = [NSData dataWithBytes:pBuffer length:BUFFER_SIZE];
-    free(pBuffer);
-    [WXApiRequestHandler sendAppContentData:data
-                                    ExtInfo:info
-                                     ExtURL:url
-                                      Title:title
-                                Description:description
-                                 MessageExt:messageExt
-                              MessageAction:action
-                                 ThumbImage:[UIImage imageWithData:thumbImage]
-                                    InScene:scene];
-}
-
-// 发送表情给微信
-RCT_EXPORT_METHOD(sendEmotionData:(NSString *)filePath
-              ThumbImage:(NSString *)thumbPath
-                 InScene:(int)scene) {
-    NSData *emoticonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
-    NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
-    
-    NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
-    [WXApiRequestHandler sendEmotionData:emoticonData
-                              ThumbImage:[UIImage imageWithData:thumbImage]
-                                 InScene:scene];
 }
 
 // 订阅消息

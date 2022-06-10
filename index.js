@@ -1,9 +1,9 @@
 // main index.js
 
-import { NativeModules, NativeEventEmitter } from "react-native";
+import { NativeModules, NativeEventEmitter, Platform } from "react-native";
 
 const { Wechat } = NativeModules;
-const emitter = new NativeEventEmitter(Wechat);
+const emitter = new NativeEventEmitter(Platform.OS === "ios" ? Wechat : null);
 
 export default class WxSdk {
   static subs = {};
@@ -102,49 +102,6 @@ export default class WxSdk {
       return data;
     });
   }
-  static async sendAppData(params) {
-    const event = "SendMessageToWXResp";
-    const {
-      info,
-      url,
-      title,
-      description,
-      messageExt,
-      action,
-      thumbPath,
-      scene,
-    } = params;
-    Wechat.sendAppData(
-      info,
-      url,
-      title,
-      description,
-      messageExt,
-      action,
-      thumbPath,
-      scene
-    );
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
-  static async sendEmotionData(filePath, thumbPath, scene) {
-    const event = "SendMessageToWXResp";
-    Wechat.sendEmotionData(filePath, thumbPath, scene);
-    return new Promise((resolve) => {
-      this.subs[event] = emitter.addListener(event, (data) => {
-        resolve(data);
-      });
-    }).then((data) => {
-      this.subs[event].remove();
-      return data;
-    });
-  }
   static subscription(scene, templateId, reserved, cb) {
     Wechat.subscription(scene, templateId, reserved);
     this.subs["WXSubscribeMsgResp"] = emitter.addListener(
@@ -170,7 +127,7 @@ export default class WxSdk {
       "ShowMessageFromWXReq",
       cb
     );
-    return this.subs["ShowMessageFromWXReq"]
+    return this.subs["ShowMessageFromWXReq"];
   }
 }
 

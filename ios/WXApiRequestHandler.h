@@ -40,58 +40,9 @@
           ThumbImage:(UIImage *)thumbImage
              InScene:(enum WXScene)scene;
 
-+ (void)sendEmotionData:(NSData *)emotionData
-             ThumbImage:(UIImage *)thumbImage
-                InScene:(enum WXScene)scene;
-
-+ (void)sendFileData:(NSData *)fileData
-       fileExtension:(NSString *)extension
-               Title:(NSString *)title
-         Description:(NSString *)description
-          ThumbImage:(UIImage *)thumbImage
-             InScene:(enum WXScene)scene;
-
-+ (void)sendMiniProgramWebpageUrl:(NSString *)webpageUrl
-                         userName:(NSString *)userName
-                             path:(NSString *)path
-                            title:(NSString *)title
-                      Description:(NSString *)description
-                       ThumbImage:(UIImage *)thumbImage
-                      hdImageData:(NSData *)hdImageData
-                  withShareTicket:(BOOL)withShareTicket
-                          InScene:(enum WXScene)scene;
-
-+ (void)launchMiniProgramWithUserName:(NSString *)userName
-                                 path:(NSString *)path;
-
-+ (void)sendAppContentData:(NSData *)data
-                   ExtInfo:(NSString *)info
-                    ExtURL:(NSString *)url
-                     Title:(NSString *)title
-               Description:(NSString *)description
-                MessageExt:(NSString *)messageExt
-             MessageAction:(NSString *)action
-                ThumbImage:(UIImage *)thumbImage
-                   InScene:(enum WXScene)scene;
-
-+ (void)addCardsToCardPackage:(NSString *)appid cardIds:(NSArray *)cardIds cardExts:(NSArray *)cardExts;
-
 + (void)sendAuthRequestScope:(NSString *)scope
                        State:(NSString *)state
                       OpenID:(NSString *)openID
             InViewController:(UIViewController *)viewController;
 
-+ (void)chooseCard:(NSString *)appid
-          cardSign:(NSString *)cardSign
-          nonceStr:(NSString *)nonceStr
-          signType:(NSString *)signType
-         timestamp:(UInt32)timestamp;
-
-+ (void)openUrl:(NSString *)url;
-
-+ (void)chooseInvoice:(NSString *)appid
-             cardSign:(NSString *)cardSign
-             nonceStr:(NSString *)nonceStr
-             signType:(NSString *)signType
-            timestamp:(UInt32)timestamp;
 @end

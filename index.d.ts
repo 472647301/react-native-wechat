@@ -66,16 +66,6 @@ declare module "@byron-react-native/wechat" {
     thumbPath: string;
     scene: WXScene;
   }
-  export interface WXAppDataParams {
-    info: string;
-    url: string;
-    title: string;
-    description: string;
-    messageExt: string;
-    action: string;
-    thumbPath: string;
-    scene: WXScene;
-  }
   export interface WXSubscribeMsgResp extends WXBaseResp {
     templateId: string;
     scene: WXScene;
@@ -150,18 +140,6 @@ declare module "@byron-react-native/wechat" {
      * 发送Video消息给微信
      */
     static sendVideoURL(params: WXVideoURLParams): Promise<WXBaseResp>;
-    /**
-     * 发送App消息给微信
-     */
-    static sendAppData(params: WXAppDataParams): Promise<WXBaseResp>;
-    /**
-     * 发送表情给微信
-     */
-    static sendEmotionData(
-      filePath: string,
-      thumbPath: string,
-      scene: WXScene
-    ): Promise<WXBaseResp>;
     /**
      * 订阅消息
      */
