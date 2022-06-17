@@ -8,25 +8,25 @@ const emitter = new NativeEventEmitter(Platform.OS === "ios" ? Wechat : null);
 export default class WxSdk {
   static subs = {};
 
-  static registerApp(appid, universalLink) {
+  static registerApp = (appid, universalLink) => {
     return Wechat.registerApp(appid, universalLink);
-  }
-  static isWXAppInstalled() {
+  };
+  static isWXAppInstalled = () => {
     return Wechat.isWXAppInstalled();
-  }
-  static isWXAppSupportApi() {
+  };
+  static isWXAppSupportApi = () => {
     return Wechat.isWXAppSupportApi();
-  }
-  static getWXAppInstallUrl() {
+  };
+  static getWXAppInstallUrl = () => {
     return Wechat.getWXAppInstallUrl();
-  }
-  static getApiVersion() {
+  };
+  static getApiVersion = () => {
     return Wechat.getApiVersion();
-  }
-  static openWXApp() {
+  };
+  static openWXApp = () => {
     return Wechat.openWXApp();
-  }
-  static async sendAuth(scope, state, openID) {
+  };
+  static sendAuth = async (scope, state, openID) => {
     const event = "SendAuthResp";
     Wechat.sendAuthReq(scope, state, openID);
     return new Promise((resolve) => {
@@ -37,8 +37,8 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static async sendText(text, scene) {
+  };
+  static sendText = async (text, scene) => {
     const event = "SendMessageToWXResp";
     Wechat.sendText(text, scene);
     return new Promise((resolve) => {
@@ -49,8 +49,8 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static async sendImage(params) {
+  };
+  static sendImage = async (params) => {
     const event = "SendMessageToWXResp";
     const { filePath, tagName, messageExt, action, thumbPath, scene } = params;
     Wechat.sendImage(filePath, tagName, messageExt, action, thumbPath, scene);
@@ -62,8 +62,8 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static async sendLinkURL(params) {
+  };
+  static sendLinkURL = async (params) => {
     const event = "SendMessageToWXResp";
     const { url, tagName, title, description, thumbPath, scene } = params;
     Wechat.sendLinkURL(url, tagName, title, description, thumbPath, scene);
@@ -75,8 +75,8 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static async sendMusicURL(params) {
+  };
+  static sendMusicURL = async (params) => {
     const event = "SendMessageToWXResp";
     const { url, dataURL, title, description, thumbPath, scene } = params;
     Wechat.sendMusicURL(url, dataURL, title, description, thumbPath, scene);
@@ -88,8 +88,8 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static async sendVideoURL(params) {
+  };
+  static sendVideoURL = async (params) => {
     const event = "SendMessageToWXResp";
     const { url, title, description, thumbPath, scene } = params;
     Wechat.sendVideoURL(url, title, description, thumbPath, scene);
@@ -101,16 +101,16 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static subscription(scene, templateId, reserved, cb) {
+  };
+  static subscription = (scene, templateId, reserved, cb) => {
     Wechat.subscription(scene, templateId, reserved);
     this.subs["WXSubscribeMsgResp"] = emitter.addListener(
       "WXSubscribeMsgResp",
       cb
     );
     return this.subs["WXSubscribeMsgResp"];
-  }
-  static async openCustomerService(corpId, url) {
+  };
+  static openCustomerService = async (corpId, url) => {
     const event = "WXOpenCustomerServiceResp";
     Wechat.openCustomerService(corpId, url);
     return new Promise((resolve) => {
@@ -121,14 +121,14 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
-  }
-  static addListener(cb) {
+  };
+  static addListener = (cb) => {
     this.subs["ShowMessageFromWXReq"] = emitter.addListener(
       "ShowMessageFromWXReq",
       cb
     );
     return this.subs["ShowMessageFromWXReq"];
-  }
+  };
 }
 
 export const WXScene = {
