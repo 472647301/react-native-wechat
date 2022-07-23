@@ -108,7 +108,7 @@ export default class WxSdk {
       return data;
     });
   };
-  static subscription = (scene, templateId, reserved, cb) => {
+  static subscription = async (scene, templateId, reserved, cb) => {
     const res = await Wechat.subscription(scene, templateId, reserved);
     if (!res) return void 0
     this.subs["WXSubscribeMsgResp"] = emitter.addListener(

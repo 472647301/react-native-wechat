@@ -167,7 +167,7 @@ declare module "@byron-react-native/wechat" {
       templateId: string,
       reserved: string,
       cb: (data: WXSubscribeMsgResp) => void
-    ): { remove: () => void } | undefined;
+    ): Promise<{ remove: () => void } | undefined>;
     /**
      * 跳转到微信客服会话
      */
