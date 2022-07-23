@@ -23,6 +23,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -32,15 +33,13 @@ import com.tencent.mm.opensdk.modelbiz.SubscribeMessage;
 import com.tencent.mm.opensdk.modelbiz.WXOpenCustomerServiceChat;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.opensdk.modelmsg.ShowMessageFromWX;
-import com.tencent.mm.opensdk.modelmsg.WXAppExtendObject;
-import com.tencent.mm.opensdk.modelmsg.WXEmojiObject;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -182,11 +181,17 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void isWXAppInstalled(Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         promise.resolve(api.isWXAppInstalled());
     }
 
     @ReactMethod
     public void isWXAppSupportApi(Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         promise.resolve(api.getWXAppSupportAPI());
     }
 
@@ -197,25 +202,70 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void getApiVersion(Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         promise.resolve(api.getWXAppSupportAPI());
     }
 
     @ReactMethod
     public void openWXApp(Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         promise.resolve(api.openWXApp());
     }
 
     @ReactMethod
-    public void sendAuthReq(String scope, String state, String openID) {
+    public void sendAuthReq(String scope, String state, String openID, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         final SendAuth.Req req = new SendAuth.Req();
         req.scope = scope;
         req.state = state;
         req.openId = openID;
-        api.sendReq(req);
+        promise.resolve(api.sendReq(req));
     }
 
     @ReactMethod
-    public void sendText(String text, int scene) {
+    public void pay(ReadableMap data, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
+        PayReq payReq = new PayReq();
+        if (data.hasKey("partnerId")) {
+            payReq.partnerId = data.getString("partnerId");
+        }
+        if (data.hasKey("prepayId")) {
+            payReq.prepayId = data.getString("prepayId");
+        }
+        if (data.hasKey("nonceStr")) {
+            payReq.nonceStr = data.getString("nonceStr");
+        }
+        if (data.hasKey("timeStamp")) {
+            payReq.timeStamp = data.getString("timeStamp");
+        }
+        if (data.hasKey("sign")) {
+            payReq.sign = data.getString("sign");
+        }
+        if (data.hasKey("package")) {
+            payReq.packageValue = data.getString("package");
+        }
+        if (data.hasKey("extData")) {
+            payReq.extData = data.getString("extData");
+        }
+        if (data.hasKey("appId")) {
+            payReq.appId = data.getString("appId");
+        }
+        promise.resolve(api.sendReq(payReq));
+    }
+
+    @ReactMethod
+    public void sendText(String text, int scene, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         WXTextObject textObj = new WXTextObject();
         textObj.text = text;
 
@@ -227,11 +277,14 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         req.transaction = buildTransaction("text");
         req.message = msg;
         req.scene = scene;
-        api.sendReq(req);
+        promise.resolve(api.sendReq(req));
     }
 
     @ReactMethod
-    public void sendImage(String filePath, String tagName, String messageExt, String action, String thumbPath, int scene) {
+    public void sendImage(String filePath, String tagName, String messageExt, String action, String thumbPath, int scene, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         getImage(Uri.parse(filePath), new ImageCallback() {
             @Override
             public void invoke(@Nullable Bitmap bitmap) {
@@ -249,13 +302,16 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 req.transaction = buildTransaction("img");
                 req.message = msg;
                 req.scene = scene;
-                api.sendReq(req);
+                promise.resolve(api.sendReq(req));
             }
         });
     }
 
     @ReactMethod
-    public void sendLinkURL(String urlString, String tagName, String title, String description, String thumbPath, int scene) {
+    public void sendLinkURL(String urlString, String tagName, String title, String description, String thumbPath, int scene, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         WXWebpageObject webpage = new WXWebpageObject();
         webpage.webpageUrl = urlString;
         WXMediaMessage msg = new WXMediaMessage(webpage);
@@ -272,13 +328,16 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 req.transaction = buildTransaction("webpage");
                 req.message = msg;
                 req.scene = scene;
-                api.sendReq(req);
+                promise.resolve(api.sendReq(req));
             }
         });
     }
 
     @ReactMethod
-    public void sendMusicURL(String musicURL, String dataURL, String title, String description, String thumbPath, int scene) {
+    public void sendMusicURL(String musicURL, String dataURL, String title, String description, String thumbPath, int scene, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         WXMusicObject music = new WXMusicObject();
         music.musicUrl = musicURL;
         music.musicDataUrl = dataURL;
@@ -296,13 +355,16 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 req.transaction = buildTransaction("music");
                 req.message = msg;
                 req.scene = scene;
-                api.sendReq(req);
+                promise.resolve(api.sendReq(req));
             }
         });
     }
 
     @ReactMethod
-    public void sendVideoURL(String videoURL, String title, String description, String thumbPath, int scene) {
+    public void sendVideoURL(String videoURL, String title, String description, String thumbPath, int scene, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         WXVideoObject video = new WXVideoObject();
         video.videoUrl = videoURL;
 
@@ -320,33 +382,37 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 req.transaction = buildTransaction("video");
                 req.message = msg;
                 req.scene = scene;
-                api.sendReq(req);
+                promise.resolve(api.sendReq(req));
             }
         });
     }
 
     @ReactMethod
-    public void subscription(String text, String templateId, String reserved) {
+    public void subscription(String text, String templateId, String reserved, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         SubscribeMessage.Req req = new SubscribeMessage.Req();
         req.scene = parseInt(text, 0);
         req.templateID = templateId;
         req.reserved = reserved;
-        api.sendReq(req);
+        promise.resolve(api.sendReq(req));
     }
 
     @ReactMethod
-    public void openCustomerService(String corpId, String url) {
+    public void openCustomerService(String corpId, String url, Promise promise) {
+        if (api == null) {
+            promise.resolve(false);
+        }
         WXOpenCustomerServiceChat.Req req = new WXOpenCustomerServiceChat.Req();
         req.corpId = corpId;
         req.url = url;
-        api.sendReq(req);
+        promise.resolve(api.sendReq(req));
     }
 
     @Override
     public void onReq(BaseReq req) {
-        if (req.getType() == ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX) {
-            goToShowMsg((ShowMessageFromWX.Req) req);
-        }
+
     }
 
     @Override
@@ -390,17 +456,6 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             data.putString("extMsg", "");
             eventEmitter.emit("WXOpenCustomerServiceResp", data);
         }
-    }
-
-    private void goToShowMsg(ShowMessageFromWX.Req showReq) {
-        WXMediaMessage wxMsg = showReq.message;
-        WXAppExtendObject obj = (WXAppExtendObject) wxMsg.mediaObject;
-        WritableMap data = Arguments.createMap();
-        data.putString("extInfo", obj.extInfo);
-        data.putString("filePath", obj.filePath);
-        data.putString("title", wxMsg.title);
-        data.putString("description", wxMsg.description);
-        eventEmitter.emit("ShowMessageFromWXReq", data);
     }
 
     private interface ImageCallback {

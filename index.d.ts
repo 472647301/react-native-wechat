@@ -73,6 +73,16 @@ declare module "@byron-react-native/wechat" {
     reserved: string;
     openId: string;
   }
+  export interface WXPayParams {
+    partnerId: string;
+    prepayId: string;
+    nonceStr: string;
+    timeStamp: string;
+    sign: string;
+    package: string;
+    extData: string;
+    appId: string;
+  }
   class WXSdk {
     /**
      * @brief WXApi的成员函数，向微信终端程序注册第三方应用
@@ -117,29 +127,38 @@ declare module "@byron-react-native/wechat" {
       scope: string,
       state: string,
       openID: string
-    ): Promise<WXSendAuthResp>;
+    ): Promise<WXSendAuthResp | undefined>;
     /**
      * 发送Text消息给微信
      * @param text 文本长度必须大于0且小于10K
      * @param scene 请求发送场景
      */
-    static sendText(text: string, scene: WXScene): Promise<WXBaseResp>;
+    static sendText(
+      text: string,
+      scene: WXScene
+    ): Promise<WXBaseResp | undefined>;
     /**
      * 发送Photo消息给微信
      */
-    static sendImage(params: WXImageParams): Promise<WXBaseResp>;
+    static sendImage(params: WXImageParams): Promise<WXBaseResp | undefined>;
     /**
      * 发送Link消息给微信
      */
-    static sendLinkURL(params: WXLinkURLParams): Promise<WXBaseResp>;
+    static sendLinkURL(
+      params: WXLinkURLParams
+    ): Promise<WXBaseResp | undefined>;
     /**
      * 发送Music消息给微
      */
-    static sendMusicURL(params: WXMusicURLParams): Promise<WXBaseResp>;
+    static sendMusicURL(
+      params: WXMusicURLParams
+    ): Promise<WXBaseResp | undefined>;
     /**
      * 发送Video消息给微信
      */
-    static sendVideoURL(params: WXVideoURLParams): Promise<WXBaseResp>;
+    static sendVideoURL(
+      params: WXVideoURLParams
+    ): Promise<WXBaseResp | undefined>;
     /**
      * 订阅消息
      */
@@ -148,14 +167,15 @@ declare module "@byron-react-native/wechat" {
       templateId: string,
       reserved: string,
       cb: (data: WXSubscribeMsgResp) => void
-    ): { remove: () => void };
+    ): { remove: () => void } | undefined;
     /**
      * 跳转到微信客服会话
      */
     static openCustomerService(
       corpId: string,
       url: string
-    ): Promise<WXBaseResp & { extMsg: string }>;
+    ): Promise<(WXBaseResp & { extMsg: string }) | undefined>;
+    static pay(params: Partial<WXPayParams>): Promise<boolean>;
     static addListener(
       cb: (data: {
         extInfo: string;

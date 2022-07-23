@@ -15,12 +15,13 @@
 
 #pragma mark - Public Methods
 + (void)sendText:(NSString *)text
-         InScene:(enum WXScene)scene {
+         InScene:(enum WXScene)scene
+      completion:(void (^ __nullable)(BOOL success))completion;{
     SendMessageToWXReq *req = [SendMessageToWXReq requestWithText:text
                                                    OrMediaMessage:nil
                                                             bText:YES
                                                           InScene:scene];
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:completion];
 }
 
 + (void)sendImageData:(NSData *)imageData
@@ -28,7 +29,8 @@
            MessageExt:(NSString *)messageExt
                Action:(NSString *)action
            ThumbImage:(UIImage *)thumbImage
-              InScene:(enum WXScene)scene {
+              InScene:(enum WXScene)scene
+           completion:(void (^ __nullable)(BOOL success))completion;{
     WXImageObject *ext = [WXImageObject object];
     ext.imageData = imageData;
     
@@ -45,7 +47,7 @@
                                                             bText:NO
                                                           InScene:scene];
     
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:completion];
 }
 
 + (void)sendLinkURL:(NSString *)urlString
@@ -53,7 +55,8 @@
               Title:(NSString *)title
         Description:(NSString *)description
          ThumbImage:(UIImage *)thumbImage
-            InScene:(enum WXScene)scene {
+            InScene:(enum WXScene)scene
+         completion:(void (^ __nullable)(BOOL success))completion;{
     WXWebpageObject *ext = [WXWebpageObject object];
     ext.webpageUrl = urlString;
 
@@ -69,7 +72,7 @@
                                                    OrMediaMessage:message
                                                             bText:NO
                                                           InScene:scene];
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:completion];
 }
 
 + (void)sendMusicURL:(NSString *)musicURL
@@ -77,7 +80,8 @@
                Title:(NSString *)title
          Description:(NSString *)description
           ThumbImage:(UIImage *)thumbImage
-             InScene:(enum WXScene)scene {
+             InScene:(enum WXScene)scene
+          completion:(void (^ __nullable)(BOOL success))completion;{
     WXMusicObject *ext = [WXMusicObject object];
     ext.musicUrl = musicURL;
     ext.musicDataUrl = dataURL;
@@ -95,14 +99,15 @@
                                                             bText:NO
                                                           InScene:scene];
     
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:completion];
 }
 
 + (void)sendVideoURL:(NSString *)videoURL
                Title:(NSString *)title
          Description:(NSString *)description
           ThumbImage:(UIImage *)thumbImage
-             InScene:(enum WXScene)scene {
+             InScene:(enum WXScene)scene
+          completion:(void (^ __nullable)(BOOL success))completion;{
     WXMediaMessage *message = [WXMediaMessage message];
     message.title = title;
     message.description = description;
@@ -117,13 +122,14 @@
                                                    OrMediaMessage:message
                                                             bText:NO
                                                           InScene:scene];
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:completion];
 }
 
 + (void)sendAuthRequestScope:(NSString *)scope
                        State:(NSString *)state
                       OpenID:(NSString *)openID
             InViewController:(UIViewController *)viewController
+                  completion:(void (^ __nullable)(BOOL success))completion;
 {
     SendAuthReq* req = [[SendAuthReq alloc] init];
     req.scope = scope; // @"post_timeline,sns"
@@ -133,7 +139,7 @@
     [WXApi sendAuthReq:req
         viewController:viewController
               delegate:[WXApiManager sharedManager]
-            completion:nil
+            completion:completion
     ];
 }
 

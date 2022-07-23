@@ -28,7 +28,8 @@ export default class WxSdk {
   };
   static sendAuth = async (scope, state, openID) => {
     const event = "SendAuthResp";
-    Wechat.sendAuthReq(scope, state, openID);
+    const res = await Wechat.sendAuthReq(scope, state, openID);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -40,7 +41,8 @@ export default class WxSdk {
   };
   static sendText = async (text, scene) => {
     const event = "SendMessageToWXResp";
-    Wechat.sendText(text, scene);
+    const res = await Wechat.sendText(text, scene);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -53,7 +55,8 @@ export default class WxSdk {
   static sendImage = async (params) => {
     const event = "SendMessageToWXResp";
     const { filePath, tagName, messageExt, action, thumbPath, scene } = params;
-    Wechat.sendImage(filePath, tagName, messageExt, action, thumbPath, scene);
+    const res = await Wechat.sendImage(filePath, tagName, messageExt, action, thumbPath, scene);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -66,7 +69,8 @@ export default class WxSdk {
   static sendLinkURL = async (params) => {
     const event = "SendMessageToWXResp";
     const { url, tagName, title, description, thumbPath, scene } = params;
-    Wechat.sendLinkURL(url, tagName, title, description, thumbPath, scene);
+    const res = await Wechat.sendLinkURL(url, tagName, title, description, thumbPath, scene);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -79,7 +83,8 @@ export default class WxSdk {
   static sendMusicURL = async (params) => {
     const event = "SendMessageToWXResp";
     const { url, dataURL, title, description, thumbPath, scene } = params;
-    Wechat.sendMusicURL(url, dataURL, title, description, thumbPath, scene);
+    const res = await Wechat.sendMusicURL(url, dataURL, title, description, thumbPath, scene);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -92,7 +97,8 @@ export default class WxSdk {
   static sendVideoURL = async (params) => {
     const event = "SendMessageToWXResp";
     const { url, title, description, thumbPath, scene } = params;
-    Wechat.sendVideoURL(url, title, description, thumbPath, scene);
+    const res = await Wechat.sendVideoURL(url, title, description, thumbPath, scene);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -103,7 +109,8 @@ export default class WxSdk {
     });
   };
   static subscription = (scene, templateId, reserved, cb) => {
-    Wechat.subscription(scene, templateId, reserved);
+    const res = await Wechat.subscription(scene, templateId, reserved);
+    if (!res) return void 0
     this.subs["WXSubscribeMsgResp"] = emitter.addListener(
       "WXSubscribeMsgResp",
       cb
@@ -112,7 +119,8 @@ export default class WxSdk {
   };
   static openCustomerService = async (corpId, url) => {
     const event = "WXOpenCustomerServiceResp";
-    Wechat.openCustomerService(corpId, url);
+    const res = await Wechat.openCustomerService(corpId, url);
+    if (!res) return void 0
     return new Promise((resolve) => {
       this.subs[event] = emitter.addListener(event, (data) => {
         resolve(data);
@@ -121,6 +129,12 @@ export default class WxSdk {
       this.subs[event].remove();
       return data;
     });
+  };
+  static pay = async (params) => {
+    if (Platform.OS !== 'android') {
+      return
+    }
+    return Wechat.pay(params);
   };
   static addListener = (cb) => {
     this.subs["ShowMessageFromWXReq"] = emitter.addListener(

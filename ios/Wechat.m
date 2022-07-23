@@ -130,17 +130,25 @@ RCT_EXPORT_METHOD(openWXApp:(RCTPromiseResolveBlock)resolve
 // 微信授权登录
 RCT_EXPORT_METHOD(sendAuthReq:(NSString *)scope
                   State:(NSString *)state
-                 OpenID:(NSString *)openID) {
+                 OpenID:(NSString *)openID
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     [WXApiRequestHandler sendAuthRequestScope: scope
                                         State:state
                                        OpenID:openID
-                             InViewController:[self getRootView]];
+                             InViewController:[self getRootView] completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 发送Text消息给微信
 RCT_EXPORT_METHOD(sendText:(NSString *)text
-                  InScene:(int)scene) {
-    [WXApiRequestHandler sendText:text InScene:scene];
+                  InScene:(int)scene
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
+    [WXApiRequestHandler sendText:text InScene:scene completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 发送Photo消息给微信
@@ -149,7 +157,9 @@ RCT_EXPORT_METHOD(sendImage:(NSString *)filePath
                MessageExt:(NSString *)messageExt
                    Action:(NSString *)action
                ThumbImage:(NSString *)thumbPath
-                  InScene:(int)scene) {
+                  InScene:(int)scene
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
     NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
     
@@ -159,7 +169,9 @@ RCT_EXPORT_METHOD(sendImage:(NSString *)filePath
                             MessageExt:messageExt
                                 Action:action
                             ThumbImage:[UIImage imageWithData:thumbImage]
-                               InScene:scene];
+                               InScene:scene completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 发送Link消息给微信
@@ -168,7 +180,9 @@ RCT_EXPORT_METHOD(sendLinkURL:(NSString *)urlString
                     Title:(NSString *)title
               Description:(NSString *)description
                ThumbImage:(NSString *)thumbPath
-                  InScene:(int)scene) {
+                  InScene:(int)scene
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
     
     NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
@@ -177,7 +191,9 @@ RCT_EXPORT_METHOD(sendLinkURL:(NSString *)urlString
                                Title:title
                          Description:description
                           ThumbImage:[UIImage imageWithData:thumbImage]
-                             InScene:scene];
+                             InScene:scene completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 发送Music消息给微
@@ -186,7 +202,9 @@ RCT_EXPORT_METHOD(sendMusicURL:(NSString *)musicURL
                     Title:(NSString *)title
               Description:(NSString *)description
                ThumbImage:(NSString *)thumbPath
-                  InScene:(int)scene) {
+                  InScene:(int)scene
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
     
     NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
@@ -195,7 +213,9 @@ RCT_EXPORT_METHOD(sendMusicURL:(NSString *)musicURL
                                 Title:title
                           Description:description
                            ThumbImage:[UIImage imageWithData:thumbImage]
-                              InScene:scene];
+                              InScene:scene completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 发送Video消息给微信
@@ -203,7 +223,9 @@ RCT_EXPORT_METHOD(sendVideoURL:(NSString *)videoURL
                   Title:(NSString *)title
             Description:(NSString *)description
              ThumbImage:(NSString *)thumbPath
-                InScene:(int)scene) {
+                InScene:(int)scene
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     NSData *thumbData = [NSData dataWithContentsOfURL:[NSURL URLWithString:thumbPath]];
     
     NSData *thumbImage = [self compressImage: [UIImage imageWithData:thumbData] toByte:32678];
@@ -211,29 +233,39 @@ RCT_EXPORT_METHOD(sendVideoURL:(NSString *)videoURL
                                 Title:title
                           Description:description
                            ThumbImage:[UIImage imageWithData:thumbImage]
-                              InScene:scene];
+                              InScene:scene completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 订阅消息
 RCT_EXPORT_METHOD(subscription:(NSString *)text
                   templateId:(NSString *)templateId
-                  reserved:(NSString *)reserved) {
+                  reserved:(NSString *)reserved
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     UInt32 scene = (UInt32)[text integerValue];
     WXSubscribeMsgReq *req = [[WXSubscribeMsgReq alloc] init];
     req.scene = scene;
     req.templateId = templateId;
     req.reserved = reserved;
     
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 // 跳转到微信客服会话
 RCT_EXPORT_METHOD(openCustomerService:(NSString *)corpId
-                  url:(NSString *)url) {
+                  url:(NSString *)url
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     WXOpenCustomerServiceReq *req = [[WXOpenCustomerServiceReq alloc] init];
     req.corpid = corpId;    //企业ID
     req.url = url;            //客服URL
-    [WXApi sendReq:req completion:nil];
+    [WXApi sendReq:req completion:^(BOOL success) {
+        resolve(@(success));
+    }];
 }
 
 #pragma mark - WXApiManagerDelegate
