@@ -1,34 +1,48 @@
 # react-native-wechat
-
+ *暂时还有部分方法没完善
+ 
 ## Getting started
 
-`$ npm install @byron-react-native/wechat --save`
+`$ yarn add @byron-react-native/wechat`
 
 ### iOS
 
 ```javascript
-// Info.plist add
+// （1）配置URL Scheme
+<>在XCode中，选择你的工程设置项，选中“TARGETS”一栏，在“info”标签栏的“URL type”
+添加一条新的“URL scheme”，新的scheme = wxappid。如果您使用的是XCode3或者更低的版本，
+则需要在plist文件中添加。</>
+
+// （2）配置LSApplicationQueriesSchemes
 <key>LSApplicationQueriesSchemes</key>
-<array>
-  <string>weixin</string>
-  <string>weixinULAPI</string>
-</array>
+	<array>
+    <string>weixin</string>
+    <string>weixinULAPI</string>
+  </array>
 
-// AppDelegate.mm add
-#import "WXApiManager.h"
+// （3）AppDelegate.mm 添加
+#import "WXApiManager.h" 
+#import "QQApiManager.h" // 如果有集成qq
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
-    return  [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
-}
-
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    return [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]];
+// weixin qq
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  // 如果有集成qq
+  if ([TencentOAuth CanHandleOpenURL:url]) {
+    return [TencentOAuth HandleOpenURL:url];
+  }
+  return [WXApi handleOpenURL:url delegate:[WXApiManager sharedManager]]; 
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>> * __nullable restorableObjects))restorationHandler
 {
-    return [WXApi handleOpenUniversalLink:userActivity delegate:[WXApiManager sharedManager]];
+  // 如果有集成qq
+  if ([TencentOAuth CanHandleUniversalLink:userActivity.webpageURL]) {
+    return [TencentOAuth HandleUniversalLink:userActivity.webpageURL];
+  }
+  return [WXApi handleOpenUniversalLink:userActivity delegate:[WXApiManager sharedManager]];
 }
+
 
 ```
 
@@ -109,29 +123,38 @@ static sendAuth(
   scope: string,
   state: string,
   openID: string
-): Promise<WXSendAuthResp>;
+): Promise<WXSendAuthResp | undefined>;
 /**
  * 发送Text消息给微信
  * @param text 文本长度必须大于0且小于10K
  * @param scene 请求发送场景
  */
-static sendText(text: string, scene: WXScene): Promise<WXBaseResp>;
+static sendText(
+  text: string,
+  scene: WXScene
+): Promise<WXBaseResp | undefined>;
 /**
  * 发送Photo消息给微信
  */
-static sendImage(params: WXImageParams): Promise<WXBaseResp>;
+static sendImage(params: WXImageParams): Promise<WXBaseResp | undefined>;
 /**
  * 发送Link消息给微信
  */
-static sendLinkURL(params: WXLinkURLParams): Promise<WXBaseResp>;
+static sendLinkURL(
+  params: WXLinkURLParams
+): Promise<WXBaseResp | undefined>;
 /**
  * 发送Music消息给微
  */
-static sendMusicURL(params: WXMusicURLParams): Promise<WXBaseResp>;
+static sendMusicURL(
+  params: WXMusicURLParams
+): Promise<WXBaseResp | undefined>;
 /**
  * 发送Video消息给微信
  */
-static sendVideoURL(params: WXVideoURLParams): Promise<WXBaseResp>;
+static sendVideoURL(
+  params: WXVideoURLParams
+): Promise<WXBaseResp | undefined>;
 /**
  * 订阅消息
  */
@@ -140,14 +163,15 @@ static subscription(
   templateId: string,
   reserved: string,
   cb: (data: WXSubscribeMsgResp) => void
-): { remove: () => void };
+): Promise<{ remove: () => void } | undefined>;
 /**
  * 跳转到微信客服会话
  */
 static openCustomerService(
   corpId: string,
   url: string
-): Promise<WXBaseResp & { extMsg: string }>;
+): Promise<(WXBaseResp & { extMsg: string }) | undefined>;
+static pay(params: Partial<WXPayParams>): Promise<boolean>;
 static addListener(
   cb: (data: {
     extInfo: string;

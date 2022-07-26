@@ -9,7 +9,7 @@
 #import "WXApiObject.h"
 
 @interface WXApiRequestHandler : NSObject
-
+NS_ASSUME_NONNULL_BEGIN
 + (void)sendText:(NSString *)text
          InScene:(enum WXScene)scene
          completion:(void (^ __nullable)(BOOL success))completion;
@@ -50,5 +50,5 @@
                       OpenID:(NSString *)openID
             InViewController:(UIViewController *)viewController
                   completion:(void (^ __nullable)(BOOL success))completion;
-
+NS_ASSUME_NONNULL_END
 @end

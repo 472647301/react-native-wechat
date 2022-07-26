@@ -1,7 +1,7 @@
 {
   "name": "@byron-react-native/wechat",
   "title": "React Native Wechat",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React Native Wechat",
   "main": "index.js",
   "files": [
